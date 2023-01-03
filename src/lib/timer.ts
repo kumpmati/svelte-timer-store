@@ -1,20 +1,22 @@
 import { writable } from 'svelte/store';
-import { formatDuration } from './format';
-import type { TimerState, Timer, TimerSection } from './types';
+import { formatDuration, parseDuration } from './format';
+import type { TimerState, Timer, TimerSection, TimerOptions } from './types';
 import { copy } from './util';
 
-const stub: TimerState = {
+const initialState = (opts?: TimerOptions): TimerState => ({
 	status: 'ended',
-	duration: formatDuration(0),
-	durationMs: 0,
-	sections: []
-};
+	startTime: Date.now(),
+	duration: parseDuration(0),
+	durationString: formatDuration({ h: 0, m: 0, s: 0, ms: 0 }, opts?.showMs),
+	sections: [],
+	laps: []
+});
 
 /**
  * Creates a timer store
  */
-export const createTimer = (): Timer => {
-	const state = writable<TimerState>(copy(stub));
+export const createTimer = (opts?: TimerOptions): Timer => {
+	const state = writable<TimerState>(copy(initialState(opts)));
 
 	let interval: any;
 
@@ -36,14 +38,15 @@ export const createTimer = (): Timer => {
 				}
 
 				section.duration = Date.now() - section.from;
-				prev.durationMs = calculateTotalDuration(prev);
-				prev.duration = formatDuration(prev.durationMs);
+				const total = calculateTotalDuration(prev);
+				prev.duration = parseDuration(total);
+				prev.durationString = formatDuration(prev.duration, opts?.showMs);
 
 				return prev;
 			});
 		};
 
-		interval = setInterval(update, 1000);
+		interval = setInterval(update, 16);
 		update();
 	};
 
@@ -58,17 +61,17 @@ export const createTimer = (): Timer => {
 	 */
 	const start = (label?: string) => {
 		state.update((prev) => {
-			if (!isEnded(prev)) {
+			if (isOngoingTimer(prev)) {
 				return prev;
 			}
 
-			startInterval();
-
-			prev = copy(stub);
+			prev = copy(initialState(opts));
 
 			// insert new section into the timer
 			prev.sections = [...prev.sections, createSection(label)];
 			prev.status = 'ongoing';
+
+			setTimeout(startInterval, 1);
 
 			return prev;
 		});
@@ -83,8 +86,6 @@ export const createTimer = (): Timer => {
 				return prev;
 			}
 
-			stopInterval();
-
 			const section = getLastSection(prev);
 			if (!section || !isOngoingSection(section)) {
 				return prev;
@@ -94,6 +95,8 @@ export const createTimer = (): Timer => {
 			section.duration = section.to - section.from;
 
 			prev.status = 'ended';
+
+			stopInterval();
 
 			return prev;
 		});
@@ -132,51 +135,32 @@ export const createTimer = (): Timer => {
 				return prev;
 			}
 
-			startInterval();
-
 			// start a new section in the timer
 			prev.sections = [...prev.sections, createSection(label)];
-
 			prev.status = 'ongoing';
+
+			startInterval();
 
 			return prev;
 		});
 	};
 
 	/**
-	 * Does the same as calling `resume` or `pause`, but depending on the timer state.
-	 */
-	const toggle = (label?: string) => {
-		const unsub = state.subscribe((s) => {
-			if (s.status === 'paused') {
-				resume(label);
-			} else if (s.status === 'ongoing') {
-				pause();
-			}
-		});
-
-		unsub();
-	};
-
-	/**
 	 * Resets the timer, allowing the timer to be started again. The timer can be reset anytime.
 	 */
 	const reset = () => {
-		state.update((prev) => {
-			if (isEnded(prev)) {
-				return prev;
-			}
-
+		state.update(() => {
 			stopInterval();
+			return copy(initialState(opts));
+		});
+	};
 
-			prev.status = 'ended';
-
-			const section = getLastSection(prev);
-			if (section && isOngoingSection(section)) {
-				section.to = Date.now();
-				section.duration = section.to - section.from;
-			}
-
+	/**
+	 * Marks a new lap in the timer
+	 */
+	const lap = () => {
+		state.update((prev) => {
+			prev.laps = [...prev.laps, Date.now()];
 			return prev;
 		});
 	};
@@ -187,8 +171,8 @@ export const createTimer = (): Timer => {
 		end,
 		pause,
 		resume,
-		toggle,
-		reset
+		reset,
+		lap
 	};
 };
 
@@ -215,8 +199,8 @@ const isEnded = (s: TimerState): boolean => s.status === 'ended';
 
 const calculateTotalDuration = (s: TimerState) => {
 	return s.sections.reduce((total, curr) => {
-		if (!curr.to) return total;
+		if (curr.to) return total + (curr.to - curr.from);
 
-		return total + (curr.to - curr.from);
+		return total + curr.duration;
 	}, 0);
 };

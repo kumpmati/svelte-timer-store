@@ -1,3 +1,27 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+	import { createTimer } from '$lib';
+
+	const timer = createTimer({ showMs: true });
+</script>
+
+<h1>durationString: {$timer.durationString}</h1>
+<h2>status: {$timer.status}</h2>
+
+{#each $timer.sections as section (section.from)}
+	<p>
+		{new Date(section.from).toLocaleTimeString('fi')} - {section.to
+			? new Date(section.to).toLocaleTimeString('fi')
+			: '<ongoing>'}
+	</p>
+{/each}
+
+{#each $timer.laps as lap}
+	<p>Lap: {(lap - $timer.startTime) / 1000}s</p>
+{/each}
+
+<button on:click={() => timer.start()}>Start</button>
+<button on:click={timer.end}>End</button>
+<button on:click={timer.pause}>Pause</button>
+<button on:click={timer.resume}>Resume</button>
+<button on:click={timer.reset}>Reset</button>
+<button on:click={timer.lap}>Lap</button>

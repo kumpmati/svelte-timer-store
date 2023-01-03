@@ -5,15 +5,17 @@ export type Timer = Readable<TimerState> & {
 	end: () => void;
 	pause: () => void;
 	resume: () => void;
-	toggle: () => void;
 	reset: () => void;
+	lap: () => void;
 };
 
 export type TimerState = {
 	status: TimerStatus;
-	duration: string;
-	durationMs: number;
+	startTime: number;
+	duration: Duration;
+	durationString: string;
 	sections: TimerSection[];
+	laps: number[];
 };
 
 type TimerSection = {
@@ -26,5 +28,12 @@ type TimerSection = {
 type TimerStatus = 'ongoing' | 'ended' | 'paused';
 
 export type TimerOptions = {
-	persistent: boolean;
+	showMs?: boolean;
+};
+
+export type Duration = {
+	h: number;
+	m: number;
+	s: number;
+	ms: number;
 };
