@@ -1,6 +1,13 @@
 import { writable } from 'svelte/store';
 import { formatDuration, parseDuration } from './format';
-import type { TimerState, Timer, TimerSection, TimerOptions } from './types';
+import type {
+	TimerState,
+	Timer,
+	TimerSection,
+	TimerOptions,
+	CallbackFunc,
+	TimerEvent
+} from './types';
 import { copy } from './util';
 
 const initialState = (opts?: TimerOptions): TimerState => ({
@@ -17,6 +24,7 @@ const initialState = (opts?: TimerOptions): TimerState => ({
  */
 export const createTimer = (opts?: TimerOptions): Timer => {
 	const state = writable<TimerState>(copy(initialState(opts)));
+	const listeners = new Map<string, CallbackFunc[]>();
 
 	let interval: any;
 
@@ -75,6 +83,8 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 
 			return prev;
 		});
+
+		_emit('start');
 	};
 
 	/**
@@ -100,6 +110,8 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 
 			return prev;
 		});
+
+		_emit('end');
 	};
 
 	/**
@@ -123,6 +135,8 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 
 			return prev;
 		});
+
+		_emit('pause');
 	};
 
 	/**
@@ -143,6 +157,8 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 
 			return prev;
 		});
+
+		_emit('resume');
 	};
 
 	/**
@@ -153,6 +169,8 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 			stopInterval();
 			return copy(initialState(opts));
 		});
+
+		_emit('reset');
 	};
 
 	/**
@@ -163,6 +181,30 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 			prev.laps = [...prev.laps, Date.now()];
 			return prev;
 		});
+
+		_emit('lap');
+	};
+
+	const _emit = (e: TimerEvent) => {
+		const l = listeners.get(e);
+		if (!l) return;
+
+		l.forEach((cb) => cb());
+	};
+
+	const on = (e: TimerEvent, cb: CallbackFunc) => {
+		const l = listeners.get(e) ?? [];
+
+		l.push(cb);
+		listeners.set(e, l);
+	};
+
+	const off = (e: TimerEvent, cb: CallbackFunc) => {
+		const l = listeners.get(e);
+		if (!l) return;
+
+		l.splice(l.indexOf(cb), 1);
+		listeners.set(e, l);
 	};
 
 	return {
@@ -172,7 +214,9 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 		pause,
 		resume,
 		reset,
-		lap
+		lap,
+		on,
+		off
 	};
 };
 

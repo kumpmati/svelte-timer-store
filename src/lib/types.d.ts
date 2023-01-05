@@ -7,6 +7,8 @@ export type Timer = Readable<TimerState> & {
 	resume: () => void;
 	reset: () => void;
 	lap: () => void;
+	on: (e: TimerEvent, cb: CallbackFunc) => void;
+	off: (e: TimerEvent, cb: CallbackFunc) => void;
 };
 
 export type TimerState = {
@@ -17,6 +19,10 @@ export type TimerState = {
 	sections: TimerSection[];
 	laps: number[];
 };
+
+type CallbackFunc = () => void;
+
+type TimerEvent = 'start' | 'end' | 'pause' | 'resume' | 'lap' | 'reset';
 
 type TimerSection = {
 	from: number;
