@@ -56,9 +56,9 @@ export type TimerState = {
 
 type CallbackFunc = () => void;
 
-type TimerEvent = 'start' | 'stop' | 'pause' | 'resume' | 'lap' | 'reset';
+export type TimerEvent = 'start' | 'stop' | 'pause' | 'resume' | 'lap' | 'reset';
 
-type TimerSection = {
+export type TimerSection = {
 	/**
 	 * Timestamp of when the section was started (in milliseconds)
 	 */
@@ -76,12 +76,12 @@ type TimerSection = {
 	label: string | null;
 
 	/**
-	 * Current duration of the section.
+	 * Current duration of the section (in milliseconds).
 	 */
 	duration: number;
 };
 
-type TimerStatus = 'ongoing' | 'stopped' | 'paused';
+export type TimerStatus = 'ongoing' | 'stopped' | 'paused';
 
 export type TimerOptions = {
 	/**
