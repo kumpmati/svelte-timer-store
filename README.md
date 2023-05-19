@@ -22,7 +22,7 @@ yarn add svelte-timer
 ## Features
 
 - Ability to pause and resume timer (sections)
-- Ability to add labels to sections
+  - Ability to add labels to sections
 - Laps
 - Timer state is presented as a readable store
 - Functions to `start`, `stop`, `pause`, `resume`, `toggle`, `reset` and do a `lap`
