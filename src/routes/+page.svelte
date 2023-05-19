@@ -16,12 +16,13 @@
 {/each}
 
 {#each $timer.laps as lap}
-	<p>Lap: {(lap - $timer.startTime) / 1000}s</p>
+	<p>Lap: {lap.durationSinceLastLap / 1000}s ({lap.durationSinceStart / 1000}s since start)</p>
 {/each}
 
 <button on:click={() => timer.start()}>Start</button>
-<button on:click={timer.end}>End</button>
+<button on:click={timer.stop}>Stop</button>
 <button on:click={timer.pause}>Pause</button>
 <button on:click={timer.resume}>Resume</button>
+<button on:click={timer.toggle}>Toggle</button>
 <button on:click={timer.reset}>Reset</button>
 <button on:click={timer.lap}>Lap</button>
