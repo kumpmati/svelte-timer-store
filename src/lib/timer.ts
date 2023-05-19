@@ -15,7 +15,7 @@ const createInitialState = (opts?: TimerOptions): TimerState => ({
 	status: 'stopped',
 	startTime: Date.now(),
 	duration: parseDuration(0),
-	durationString: formatDuration({ h: 0, m: 0, s: 0, ms: 0 }, opts?.showMs),
+	durationStr: formatDuration({ h: 0, m: 0, s: 0, ms: 0 }, opts?.showMs),
 	sections: [],
 	laps: []
 });
@@ -51,7 +51,7 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 				section.duration = Date.now() - section.from;
 				const total = calculateTotalDuration(prev);
 				prev.duration = parseDuration(total);
-				prev.durationString = formatDuration(prev.duration, opts?.showMs);
+				prev.durationStr = formatDuration(prev.duration, opts?.showMs);
 
 				return prev;
 			});

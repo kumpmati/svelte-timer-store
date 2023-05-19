@@ -4,16 +4,21 @@
 	const timer = createTimer({ showMs: true });
 </script>
 
-<h1>durationString: {$timer.durationString}</h1>
+<h1>durationString: {$timer.durationStr}</h1>
 <h2>status: {$timer.status}</h2>
 
-{#each $timer.sections as section (section.from)}
-	<p>
-		{new Date(section.from).toLocaleTimeString('fi')} - {section.to
-			? new Date(section.to).toLocaleTimeString('fi')
-			: '<ongoing>'}
-	</p>
-{/each}
+<ul>
+	{#each $timer.sections as section (section.from)}
+		<li>
+			<p>
+				{new Date(section.from).toLocaleTimeString('fi')} - {section.to
+					? new Date(section.to).toLocaleTimeString('fi')
+					: '<ongoing>'}
+			</p>
+			<p>Duration: {section.duration}</p>
+		</li>
+	{/each}
+</ul>
 
 {#each $timer.laps as lap}
 	<p>Lap: {lap.durationSinceLastLap / 1000}s ({lap.durationSinceStart / 1000}s since start)</p>

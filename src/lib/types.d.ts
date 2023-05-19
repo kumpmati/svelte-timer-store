@@ -49,8 +49,16 @@ export type TimerState = {
 	/**
 	 * Current total duration of the timer, formatted as a string (HH:mm:ss.ms)
 	 */
-	durationString: string;
+	durationStr: string;
+
+	/**
+	 * Timer's sections
+	 */
 	sections: TimerSection[];
+
+	/**
+	 * Timer's laps
+	 */
 	laps: Lap[];
 };
 
