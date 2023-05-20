@@ -74,7 +74,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 */
 	const start = (label?: string) => {
 		state.update((prev) => {
-			if (isOngoingTimer(prev)) {
+			if (isOngoingTimer(prev) || prev.status !== 'stopped') {
 				return prev;
 			}
 
@@ -97,17 +97,12 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 */
 	const stop = () => {
 		state.update((prev) => {
-			if (isStopped(prev) || !isOngoingTimer(prev)) {
-				return prev;
-			}
-
 			const section = getLastSection(prev);
-			if (!section || !isOngoingSection(section)) {
-				return prev;
-			}
 
-			section.to = Date.now();
-			section.duration = section.to - section.from;
+			if (section && !isOngoingSection(section)) {
+				section.to = Date.now();
+				section.duration = section.to - section.from;
+			}
 
 			prev.status = 'stopped';
 
@@ -131,6 +126,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 			stopInterval();
 
 			const section = getLastSection(prev);
+
 			if (section && isOngoingSection(section)) {
 				section.to = Date.now();
 				section.duration = section.to - section.from;

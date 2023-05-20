@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createTimer } from '$lib';
 
-	const timer = createTimer({ showMs: false, updateInterval: 1000 });
+	const timer = createTimer({ showMs: true });
 </script>
 
 <h1>durationString: {$timer.durationStr}</h1>

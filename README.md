@@ -4,7 +4,7 @@ Simple timer store with support for pausing and laps, with zero dependencies (ap
 
 ## Installation
 
-This is a simple library intended to be used with [Svelte](https://svelte.dev), as it utilises Svelte's [stores](https://svelte.dev/tutorial/writable-stores).
+This is a simple library that utilises Svelte's [stores](https://svelte.dev/tutorial/writable-stores), therefore Svelte is required to use it.
 
 Installation is done using your favourite package manager:
 
@@ -80,6 +80,7 @@ Constructs the timer store.
 Options:
 
 - `showMs`?: boolean - If true, milliseconds are included in the duration string
+- `updateInterval`?: number - How often in milliseconds to update the calculated duration
 
 ### `timer.start(label?: string)`
 
@@ -100,7 +101,9 @@ Resumes the timer, starting a new section. Only works if the timer is paused.
 
 ### `timer.toggle(label?: string)`
 
-Convenience function to start, pause or resume the timer based on the current state. You can provide an optional label for the new sections.
+Convenience function to start, pause or resume the timer based on the current state.
+
+You can provide an optional label for when a new section is started.
 
 ### `timer.lap()`
 
@@ -109,3 +112,7 @@ Adds a new lap.
 ### `timer.reset()`
 
 Resets the timer to its initial state, clearing all sections and laps.
+
+```
+
+```
