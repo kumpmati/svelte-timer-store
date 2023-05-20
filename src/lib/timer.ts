@@ -23,11 +23,18 @@ const createInitialState = (opts?: TimerOptions): TimerState => ({
 /**
  * Creates a timer store
  */
-export const createTimer = (opts?: TimerOptions): Timer => {
+export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval: 16 }): Timer => {
+	if ((opts?.updateInterval ?? 0) < 0) throw new Error('updateInterval cannot be under 0');
+
 	const state = writable<TimerState>(copy(createInitialState(opts)));
 	const listeners = new Map<string, CallbackFunc[]>();
 
 	let interval: any;
+
+	const stopInterval = () => {
+		clearInterval(interval);
+		interval = null;
+	};
 
 	/**
 	 * INTERNAL: updates the total duration and latest
@@ -51,19 +58,14 @@ export const createTimer = (opts?: TimerOptions): Timer => {
 				section.duration = Date.now() - section.from;
 				const total = calculateTotalDuration(prev);
 				prev.duration = parseDuration(total);
-				prev.durationStr = formatDuration(prev.duration, opts?.showMs);
+				prev.durationStr = formatDuration(prev.duration, opts.showMs);
 
 				return prev;
 			});
 		};
 
-		interval = setInterval(update, 16);
+		interval = setInterval(update, opts.updateInterval);
 		update();
-	};
-
-	const stopInterval = () => {
-		clearInterval(interval);
-		interval = null;
 	};
 
 	/**

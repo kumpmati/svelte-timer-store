@@ -1,5 +1,19 @@
 import type { Readable } from 'svelte/store';
 
+export type TimerOptions = {
+	/**
+	 * Include milliseconds in the duration string?
+	 */
+	showMs?: boolean;
+
+	/**
+	 * How often (in milliseconds) to calculate the current duration?
+	 *
+	 * Default: `16`
+	 */
+	updateInterval?: number;
+};
+
 export type Timer = Readable<TimerState> & {
 	start: () => void;
 	stop: () => void;
@@ -90,13 +104,6 @@ export type TimerSection = {
 };
 
 export type TimerStatus = 'ongoing' | 'stopped' | 'paused';
-
-export type TimerOptions = {
-	/**
-	 * Include milliseconds in the duration string
-	 */
-	showMs?: boolean;
-};
 
 export type Duration = {
 	/**
