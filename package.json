@@ -1,11 +1,11 @@
 {
-	"name": "svelte-timer",
+	"name": "svelte-timer-store",
 	"description": "Simple timer store with support for pausing and laps",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "MIT",
 	"author": "Matias Kumpulainen <matias.kumpulainen@kvanttori.fi>",
-	"repository": "kumpmati/svelte-timer",
-	"homepage": "https://github.com/kumpmati/svelte-timer",
+	"repository": "kumpmati/svelte-timer-store",
+	"homepage": "https://github.com/kumpmati/svelte-timer-store",
 	"keywords": [
 		"svelte",
 		"timer"
@@ -31,12 +31,14 @@
 		"eslint-plugin-svelte3": "^4.0.0",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
-		"svelte": "^3.54.0",
 		"svelte-check": "^2.9.2",
 		"tslib": "^2.4.1",
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0",
 		"vitest": "^0.25.3"
+	},
+	"peerDependencies": {
+		"svelte": "^3.59.1"
 	},
 	"type": "module"
 }

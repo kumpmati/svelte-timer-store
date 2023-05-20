@@ -10,13 +10,13 @@ Installation is done using your favourite package manager:
 
 ```bash
 # npm
-npm install svelte-timer
+npm install svelte-timer-store
 
 # pnpm
-pnpm install svelte-timer
+pnpm install svelte-timer-store
 
 # yarn
-yarn add svelte-timer
+yarn add svelte-timer-store
 ```
 
 ## Features
@@ -33,7 +33,7 @@ To use the timer, import the `createTimer` function. The function can then be us
 
 ```html
 <script>
-	import { createTimer } from 'svelte-timer';
+	import { createTimer } from 'svelte-timer-store';
 
 	const timer = createTimer({ showMs: true });
 </script>
