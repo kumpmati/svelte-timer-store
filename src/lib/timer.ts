@@ -56,6 +56,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 				}
 
 				section.duration = Date.now() - section.from;
+				section.durationParts = parseDuration(section.duration);
 				const total = calculateTotalDuration(prev);
 				prev.duration = parseDuration(total);
 				prev.durationStr = formatDuration(prev.duration, opts.showMs);
@@ -99,9 +100,11 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 		state.update((prev) => {
 			const section = getLastSection(prev);
 
-			if (section && !isOngoingSection(section)) {
+			if (section && isOngoingSection(section)) {
 				section.to = Date.now();
 				section.duration = section.to - section.from;
+				section.durationParts = parseDuration(section.duration);
+				section.status = 'stopped';
 			}
 
 			prev.status = 'stopped';
@@ -130,6 +133,8 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 			if (section && isOngoingSection(section)) {
 				section.to = Date.now();
 				section.duration = section.to - section.from;
+				section.durationParts = parseDuration(section.duration);
+				section.status = 'stopped';
 			}
 
 			prev.status = 'paused';
@@ -269,7 +274,9 @@ const createSection = (label?: string): TimerSection => ({
 	from: Date.now(),
 	to: null,
 	label: label ?? null,
-	duration: 0
+	duration: 0,
+	durationParts: parseDuration(0),
+	status: 'ongoing'
 });
 
 const getLastSection = (s: TimerState): TimerSection | null => s.sections.at(-1) ?? null;
