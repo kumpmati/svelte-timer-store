@@ -1,4 +1,4 @@
-# Svelte timer
+# Svelte timer store
 
 Simple timer store with support for pausing and laps, with zero dependencies (apart from svelte).
 
