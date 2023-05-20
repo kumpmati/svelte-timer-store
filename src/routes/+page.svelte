@@ -15,7 +15,12 @@
 					? new Date(section.to).toLocaleTimeString('fi')
 					: '<ongoing>'}
 			</p>
+			<p>
+				Duration parts: {section.durationParts.h}:{section.durationParts.m}:{section.durationParts
+					.s}.{section.durationParts.ms}
+			</p>
 			<p>Duration: {section.duration}</p>
+			<p>Status: {section.status}</p>
 		</li>
 	{/each}
 </ul>

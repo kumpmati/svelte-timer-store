@@ -26,6 +26,8 @@ export type Timer = Readable<TimerState> & {
 	off: (e: TimerEvent, cb: CallbackFunc) => void;
 };
 
+export type TimerEvent = 'start' | 'stop' | 'pause' | 'resume' | 'lap' | 'reset';
+
 export type Lap = {
 	/**
 	 * Duration (in milliseconds) from the start of the timer
@@ -48,7 +50,7 @@ export type TimerState = {
 	/**
 	 * Current status of the timer
 	 */
-	status: TimerStatus;
+	status: 'ongoing' | 'stopped' | 'paused';
 
 	/**
 	 * Timestamp (in milliseconds) when the timer was first started
@@ -78,11 +80,9 @@ export type TimerState = {
 
 type CallbackFunc = () => void;
 
-export type TimerEvent = 'start' | 'stop' | 'pause' | 'resume' | 'lap' | 'reset';
-
 export type TimerSection = {
 	/**
-	 * Timestamp of when the section was started (in milliseconds)
+	 * Timestamp of when the section was started (in milliseconds).
 	 */
 	from: number;
 
@@ -101,9 +101,18 @@ export type TimerSection = {
 	 * Current duration of the section (in milliseconds).
 	 */
 	duration: number;
-};
 
-export type TimerStatus = 'ongoing' | 'stopped' | 'paused';
+	/**
+	 * Current duration of the section divided into hours,
+	 * minutes, seconds and milliseconds.
+	 */
+	durationParts: Duration;
+
+	/**
+	 * Current status of the section.
+	 */
+	status: 'ongoing' | 'stopped';
+};
 
 export type Duration = {
 	/**
