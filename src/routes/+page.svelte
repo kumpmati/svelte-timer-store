@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { createTimer } from '$lib';
 
-	const timer = createTimer({ showMs: true });
+	const timer = createTimer({
+		showMs: true,
+		persist: {
+			id: '1',
+			strategy: 'local'
+		}
+	});
 </script>
 
 <h1>durationString: {$timer.durationStr}</h1>

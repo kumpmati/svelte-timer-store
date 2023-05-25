@@ -12,6 +12,23 @@ export type TimerOptions = {
 	 * Default: `16`
 	 */
 	updateInterval?: number;
+
+	/**
+	 * Persists the timer state into local or session storage.
+	 */
+	persist?: {
+		/**
+		 * ID to use when saving / loading the timer.
+		 */
+		id: string | number;
+
+		/**
+		 * Where to save the state
+		 *
+		 * Default: `local`
+		 */
+		strategy: 'local' | 'session';
+	};
 };
 
 export type Timer = Readable<TimerState> & {
