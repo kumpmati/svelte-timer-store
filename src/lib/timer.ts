@@ -10,6 +10,7 @@ import type {
 	Lap
 } from './types';
 import { copy } from './util';
+import { persisted } from 'svelte-local-storage-store';
 
 const createInitialState = (opts?: TimerOptions): TimerState => ({
 	status: 'stopped',
@@ -26,7 +27,14 @@ const createInitialState = (opts?: TimerOptions): TimerState => ({
 export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval: 16 }): Timer => {
 	if ((opts?.updateInterval ?? 0) < 0) throw new Error('updateInterval cannot be under 0');
 
-	const state = writable<TimerState>(copy(createInitialState(opts)));
+	const initialState = copy(createInitialState(opts));
+
+	const state = opts.persist
+		? persisted(`svelte-timer-store-${opts.persist.id}`, initialState, {
+				storage: opts.persist.strategy ?? 'local'
+		  })
+		: writable(initialState);
+
 	const listeners = new Map<string, CallbackFunc[]>();
 
 	let interval: any;
@@ -68,6 +76,10 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 		interval = setInterval(update, opts.updateInterval);
 		update();
 	};
+
+	if (opts.persist) {
+		startInterval();
+	}
 
 	/**
 	 * Resets and starts the timer. If the timer is already ongoing, this does nothing.
