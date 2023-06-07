@@ -32,11 +32,11 @@ export type TimerOptions = {
 };
 
 export type Timer = Readable<TimerState> & {
-	start: () => void;
+	start: (label?: string) => void;
 	stop: () => void;
 	pause: () => void;
-	resume: () => void;
-	toggle: () => void;
+	resume: (label?: string) => void;
+	toggle: (label?: string) => void;
 	reset: () => void;
 	lap: () => void;
 	on: (e: TimerEvent, cb: CallbackFunc) => void;
