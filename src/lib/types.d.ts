@@ -41,6 +41,9 @@ export type Timer = Readable<TimerState> & {
 	lap: () => void;
 	on: (e: TimerEvent, cb: CallbackFunc) => void;
 	off: (e: TimerEvent, cb: CallbackFunc) => void;
+
+	load: (state: TimerState) => void;
+	save: () => TimerState;
 };
 
 export type TimerEvent = 'start' | 'stop' | 'pause' | 'resume' | 'lap' | 'reset';
