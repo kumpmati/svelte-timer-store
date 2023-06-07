@@ -12,6 +12,8 @@
 
 <h1>durationString: {$timer.durationStr}</h1>
 <h2>status: {$timer.status}</h2>
+<h2>startTime: {$timer.startTime}</h2>
+<h2>endtime: {$timer.endTime}</h2>
 
 <ul>
 	{#each $timer.sections as section (section.from)}
@@ -38,7 +40,7 @@
 <button on:click={() => timer.start()}>Start</button>
 <button on:click={timer.stop}>Stop</button>
 <button on:click={timer.pause}>Pause</button>
-<button on:click={timer.resume}>Resume</button>
-<button on:click={timer.toggle}>Toggle</button>
+<button on:click={() => timer.resume()}>Resume</button>
+<button on:click={() => timer.toggle()}>Toggle</button>
 <button on:click={timer.reset}>Reset</button>
 <button on:click={timer.lap}>Lap</button>
