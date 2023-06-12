@@ -8,6 +8,14 @@
 			strategy: 'local'
 		}
 	});
+
+	let state: string | null = null;
+
+	const setTimer = () => {
+		if (state) {
+			timer.load(JSON.parse(state));
+		}
+	};
 </script>
 
 <h1>durationString: {$timer.durationStr}</h1>
@@ -44,3 +52,7 @@
 <button on:click={() => timer.toggle()}>Toggle</button>
 <button on:click={timer.reset}>Reset</button>
 <button on:click={timer.lap}>Lap</button>
+<button on:click={setTimer}>Load timer state</button>
+<button on:click={() => (state = JSON.stringify(timer.save()))}>Save timer state</button>
+
+<textarea bind:value={state} />

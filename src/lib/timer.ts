@@ -86,7 +86,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 * Resets and starts the timer. If the timer is already ongoing, this does nothing.
 	 * @param label
 	 */
-	const start = (label?: string) => {
+	const start: Timer['start'] = (label) => {
 		state.update((prev) => {
 			if (isOngoingTimer(prev) || prev.status !== 'stopped') {
 				return prev;
@@ -111,7 +111,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 *
 	 * After the timer has been stopped, it cannot be resumed without resetting.
 	 */
-	const stop = () => {
+	const stop: Timer['stop'] = () => {
 		state.update((prev) => {
 			const section = getLastSection(prev);
 
@@ -138,7 +138,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	/**
 	 * Pauses the timer. If the timer is stopped or already paused, this does nothing.
 	 */
-	const pause = () => {
+	const pause: Timer['pause'] = () => {
 		state.update((prev) => {
 			if (isStopped(prev) || !isOngoingTimer(prev)) {
 				return prev;
@@ -167,7 +167,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 * Resumes the timer. If the timer is stopped or already paused, this does nothing.
 	 * @param label (Optional) Give a name to the new section
 	 */
-	const resume = (label?: string) => {
+	const resume: Timer['resume'] = (label) => {
 		state.update((prev) => {
 			if (isStopped(prev) || isOngoingTimer(prev)) {
 				return prev;
@@ -188,9 +188,11 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	/**
 	 * Resets the timer to its initial state, clearing any previous information.
 	 */
-	const reset = () => {
-		stopInterval();
-		state.set(copy(createInitialState(opts)));
+	const reset: Timer['reset'] = () => {
+		state.update(() => {
+			stopInterval();
+			return copy(createInitialState(opts));
+		});
 
 		_emit('reset');
 	};
@@ -198,7 +200,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	/**
 	 * Marks a new lap in the timer. Does nothing if the timer isn't running.
 	 */
-	const lap = () => {
+	const lap: Timer['lap'] = () => {
 		state.update((prev) => {
 			if (isStopped(prev) || !isOngoingTimer(prev)) {
 				return prev;
@@ -226,7 +228,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 * Starts/resumes the timer when it's not running, or pauses it when running.
 	 * @param (Optional) label for the section
 	 */
-	const toggle = (label?: string) => {
+	const toggle: Timer['toggle'] = (label) => {
 		const s = get(state);
 
 		switch (s.status) {
@@ -256,7 +258,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 * @param event Event type
 	 * @param cb Callback function
 	 */
-	const on = (event: TimerEvent, cb: CallbackFunc) => {
+	const on: Timer['on'] = (event, cb) => {
 		const l = listeners.get(event) ?? [];
 
 		l.push(cb);
@@ -268,13 +270,32 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 * @param event Event type
 	 * @param cb Callback function
 	 */
-	const off = (event: TimerEvent, cb: CallbackFunc) => {
+	const off: Timer['off'] = (event, cb) => {
 		const l = listeners.get(event);
 		if (!l) return;
 
 		l.splice(l.indexOf(cb), 1);
 		listeners.set(event, l);
 	};
+
+	/**
+	 * Replaces the current timer state with the given state.
+	 *
+	 * @param data
+	 */
+	const load: Timer['load'] = (data) => {
+		state.set(data);
+		startInterval();
+	};
+
+	/**
+	 * Returns the current timer state.
+	 *
+	 * Useful for saving the timer state externally.
+	 *
+	 * @returns Timer state
+	 */
+	const save: Timer['save'] = () => get(state);
 
 	return {
 		subscribe: state.subscribe,
@@ -286,7 +307,9 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 		reset,
 		lap,
 		on,
-		off
+		off,
+		load,
+		save
 	};
 };
 

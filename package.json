@@ -1,7 +1,7 @@
 {
 	"name": "svelte-timer-store",
 	"description": "Simple timer store with support for pausing and laps",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"license": "MIT",
 	"author": "Matias Kumpulainen <matias.kumpulainen@kvanttori.fi>",
 	"repository": "kumpmati/svelte-timer-store",
