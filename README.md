@@ -1,6 +1,6 @@
 # Svelte timer store
 
-Simple timer store with support for pausing and laps, with zero dependencies (apart from svelte).
+Simple timer store with support for pausing and laps.
 
 ## Installation
 
@@ -36,6 +36,16 @@ To use the timer, import the `createTimer` function. The function can then be us
 	import { createTimer } from 'svelte-timer-store';
 
 	const timer = createTimer({ showMs: true, updateInterval: 100 });
+
+	const handleSave = () => {
+		const state = timer.save();
+		someFunctionToPersistState(state);
+	};
+
+	onMount(async () => {
+		const savedState = await someFunctionToLoadState();
+		timer.load(savedState);
+	});
 </script>
 
 <!-- Subscribing to the store allows you to read its current state -->

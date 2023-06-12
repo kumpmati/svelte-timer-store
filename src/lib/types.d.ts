@@ -78,6 +78,11 @@ export type TimerState = {
 	startTime: number;
 
 	/**
+	 * Timestamp (in milliseconds) when the timer was ended.
+	 */
+	endTime: number | null;
+
+	/**
 	 * Current total duration of the timer
 	 */
 	duration: Duration;

@@ -20,6 +20,8 @@
 
 <h1>durationString: {$timer.durationStr}</h1>
 <h2>status: {$timer.status}</h2>
+<h2>startTime: {$timer.startTime}</h2>
+<h2>endtime: {$timer.endTime}</h2>
 
 <ul>
 	{#each $timer.sections as section (section.from)}

@@ -15,6 +15,7 @@ import { persisted } from 'svelte-local-storage-store';
 const createInitialState = (opts?: TimerOptions): TimerState => ({
 	status: 'stopped',
 	startTime: Date.now(),
+	endTime: null,
 	duration: parseDuration(0),
 	durationStr: formatDuration({ h: 0, m: 0, s: 0, ms: 0 }, opts?.showMs),
 	sections: [],
@@ -94,7 +95,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 			prev = copy(createInitialState(opts));
 
 			// insert new section into the timer
-			prev.sections = [...prev.sections, createSection(label)];
+			prev.sections = [...prev.sections, createSection(prev.startTime, label)];
 			prev.status = 'ongoing';
 
 			setTimeout(startInterval, 1);
@@ -107,19 +108,24 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 
 	/**
 	 * Stops the timer, but does not clear it.
+	 *
+	 * After the timer has been stopped, it cannot be resumed without resetting.
 	 */
 	const stop: Timer['stop'] = () => {
 		state.update((prev) => {
 			const section = getLastSection(prev);
 
+			const now = Date.now();
+
 			if (section && isOngoingSection(section)) {
-				section.to = Date.now();
+				section.to = now;
 				section.duration = section.to - section.from;
 				section.durationParts = parseDuration(section.duration);
 				section.status = 'stopped';
 			}
 
 			prev.status = 'stopped';
+			prev.endTime = now;
 
 			stopInterval();
 
@@ -168,7 +174,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 			}
 
 			// start a new section in the timer
-			prev.sections = [...prev.sections, createSection(label)];
+			prev.sections = [...prev.sections, createSection(Date.now(), label)];
 			prev.status = 'ongoing';
 
 			startInterval();
@@ -224,12 +230,16 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	 */
 	const toggle: Timer['toggle'] = (label) => {
 		const s = get(state);
-		if (s.status === 'stopped') {
-			return start(label);
-		} else if (s.status === 'ongoing') {
-			return pause();
-		} else if (s.status === 'paused') {
-			return resume(label);
+
+		switch (s.status) {
+			case 'stopped':
+				return start(label);
+
+			case 'ongoing':
+				return pause();
+
+			case 'paused':
+				return resume(label);
 		}
 	};
 
@@ -303,8 +313,8 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 	};
 };
 
-const createSection = (label?: string): TimerSection => ({
-	from: Date.now(),
+const createSection = (from: number, label?: string): TimerSection => ({
+	from,
 	to: null,
 	label: label ?? null,
 	duration: 0,
