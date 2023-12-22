@@ -38,6 +38,7 @@ export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval
 
 	const listeners = new Map<string, CallbackFunc[]>();
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let interval: any;
 
 	const stopInterval = () => {
