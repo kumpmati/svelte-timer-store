@@ -1,11 +1,9 @@
-name: API main deployment pipeline
-
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
-    branches: [master]
+    branches: [main]
     types: [opened, synchronize]
 
 jobs:
