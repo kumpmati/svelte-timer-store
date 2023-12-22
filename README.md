@@ -1,5 +1,7 @@
 # Svelte timer store
 
+[![main pipeline](https://github.com/kumpmati/svelte-timer-store/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kumpmati/svelte-timer-store/actions/workflows/main.yml)
+
 Simple timer store with support for pausing and laps.
 
 ## Installation
