@@ -1,0 +1,29 @@
+name: API main deployment pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  test_and_build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16.x'
+      - name: install dependencies
+        run: npm install
+      - name: lint
+        run: npm run lint
+      - name: run tests
+        run: npm run test
+      - name: audit dependencis
+        run: npm audit --audit-level=high
+      - name: build
+        run: npm run build
