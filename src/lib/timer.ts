@@ -1,4 +1,4 @@
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 import { formatDuration, parseDuration } from './format';
 import type {
 	TimerState,
@@ -9,18 +9,7 @@ import type {
 	TimerEvent,
 	Lap
 } from './types';
-import { copy } from './util';
-import { persisted } from 'svelte-local-storage-store';
-
-const createInitialState = (opts?: TimerOptions): TimerState => ({
-	status: 'stopped',
-	startTime: Date.now(),
-	endTime: null,
-	duration: parseDuration(0),
-	durationStr: formatDuration({ h: 0, m: 0, s: 0, ms: 0 }, opts?.showMs),
-	sections: [],
-	laps: []
-});
+import { copy, createInitialState, getStore } from './util';
 
 /**
  * Creates a timer store
@@ -28,13 +17,7 @@ const createInitialState = (opts?: TimerOptions): TimerState => ({
 export const createTimer = (opts: TimerOptions = { showMs: false, updateInterval: 16 }): Timer => {
 	if ((opts?.updateInterval ?? 0) < 0) throw new Error('updateInterval cannot be under 0');
 
-	const initialState = copy(createInitialState(opts));
-
-	const state = opts.persist
-		? persisted(`svelte-timer-store-${opts.persist.id}`, initialState, {
-				storage: opts.persist.strategy ?? 'local'
-		  })
-		: writable(initialState);
+	const state = getStore(createInitialState(opts), opts.persist);
 
 	const listeners = new Map<string, CallbackFunc[]>();
 
